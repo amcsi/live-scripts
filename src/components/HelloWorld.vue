@@ -1,41 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue';
+import SourceCode from './SourceCode.vue';
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
+
+const sourcePhpVersion = ref('8.0');
+const targetPhpVersion = ref('8.1');
+const modIniFiles = ref('sqlsrv.ini pdo_sqlsrv.ini');
+const symlinkedIniFiles = ref('30-pdo_sqlsrv.ini');
+
+const code = computed(() => {
+  const modIniFilesToCopy = modIniFiles.value.split(/\s+/).map(filename => `mods-available/${filename}`).join(' ');
+  const symlinkedIniFilesToCopy = symlinkedIniFiles.value.split(/\s+/).map(filename => `fpm/conf.d/${filename} cli/conf.d/${filename}`).join(' ');
+
+  return `cd /etc/${sourcePhpVersion.value}
+  cp --no-dereference --parents ${modIniFilesToCopy} ${symlinkedIniFilesToCopy} ../${targetPhpVersion.value}/
+  `
+})
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <div class="container">
+    Copies PHP config files over to new PHP version directory in Ubuntu:
 
-  <p>
-    Recommended IDE setup:
-    <a href="https://code.visualstudio.com/" target="_blank">VSCode</a>
-    +
-    <a href="https://github.com/johnsoncodehk/volar" target="_blank">Volar</a>
-  </p>
-
-  <p>See <code>README.md</code> for more information.</p>
-
-  <p>
-    <a href="https://vitejs.dev/guide/features.html" target="_blank">
-      Vite Docs
-    </a>
-    |
-    <a href="https://v3.vuejs.org/" target="_blank">Vue 3 Docs</a>
-  </p>
-
-  <button type="button" @click="count++">count is: {{ count }}</button>
-  <p>
-    Edit
-    <code>components/HelloWorld.vue</code> to test hot module replacement.
-  </p>
+    <div>
+      <input type="text" title="Source PHP version" placeholder="Source PHP version" v-model="sourcePhpVersion" />
+      <input type="text" title="Target PHP version" placeholder="Target PHP version" v-model="targetPhpVersion" />
+      <input type="text" title="Base ini files" placeholder="Base ini files" v-model="modIniFiles" />
+      <input type="text" title="Symlinked ini files" placeholder="Symlinked ini files" v-model="symlinkedIniFiles" />
+    </div>
+    <SourceCode :code="code" />
+  </div>
 </template>
 
 <style scoped>
 a {
   color: #42b983;
+}
+
+.container {
+  text-align: left;
 }
 
 label {
