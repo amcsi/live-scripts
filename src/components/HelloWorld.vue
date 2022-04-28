@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import SourceCode from './SourceCode.vue';
+import InstallPhpUbuntu from './scripts/InstallPhpUbuntu.vue';
 
 defineProps<{ msg: string }>()
 
@@ -22,16 +23,20 @@ const code = computed(() => {
 </script>
 
 <template>
-  <div class="container">
-    Copies PHP config files over to new PHP version directory in Ubuntu:
+  <div>
+    <div class="container">
+      Copies PHP config files over to new PHP version directory in Ubuntu:
 
-    <div>
-      <input type="text" title="Source PHP version" placeholder="Source PHP version" v-model="sourcePhpVersion" />
-      <input type="text" title="Target PHP version" placeholder="Target PHP version" v-model="targetPhpVersion" />
-      <input type="text" title="Base ini files" placeholder="Base ini files" v-model="modIniFiles" />
-      <input type="text" title="Symlinked ini files" placeholder="Symlinked ini files" v-model="symlinkedIniFiles" />
+      <div>
+        <input type="text" title="Source PHP version" placeholder="Source PHP version" v-model="sourcePhpVersion" />
+        <input type="text" title="Target PHP version" placeholder="Target PHP version" v-model="targetPhpVersion" />
+        <input type="text" title="Base ini files" placeholder="Base ini files" v-model="modIniFiles" />
+        <input type="text" title="Symlinked ini files" placeholder="Symlinked ini files" v-model="symlinkedIniFiles" />
+      </div>
+      <SourceCode :code="code" />
     </div>
-    <SourceCode :code="code" />
+
+    <InstallPhpUbuntu />
   </div>
 </template>
 
