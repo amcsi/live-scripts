@@ -27,6 +27,7 @@ export default {
       phpVersion: '8.1',
       extensions: [
         'curl',
+        'dev',
         'fpm',
         'gd',
         'mbstring',
